@@ -1,4 +1,4 @@
-import { Component } from "react";
+import React,{ Component } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 
 declare module "react-native-raw-bottom-sheet" {
@@ -20,6 +20,7 @@ declare module "react-native-raw-bottom-sheet" {
       draggableIcon?: StyleProp<ViewStyle>;
     };
     keyboardAvoidingViewEnabled?: boolean;
+    children?: React.ReactNode;
   };
 
   export default class RBSheet extends Component<RBSheetProps> {
