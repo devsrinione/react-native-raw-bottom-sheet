@@ -22,6 +22,7 @@ const SUPPORTED_ORIENTATIONS = [
 class RBSheet extends Component {
   constructor(props) {
     super(props);
+    this.closeAnimation = null;
     this.state = {
       modalVisible: false,
       animatedHeight: new Animated.Value(0),
@@ -42,23 +43,30 @@ class RBSheet extends Component {
       }).start();
     }
   }
+  componentWillUnmount() {
+    if (this.closeAnimation) {
+      this.closeAnimation.stop();
+      this.closeAnimation = null;
+    }
+  }
   setModalVisible(visible, props) {
     const { height, minClosingHeight, openDuration, closeDuration, onClose, onOpen } = this.props;
     const { animatedHeight, pan } = this.state;
     if (visible) {
       this.setState({ modalVisible: visible });
       if (typeof onOpen === "function") onOpen(props);
-      Animated.timing(animatedHeight, {
+        Animated.timing(animatedHeight, {
         useNativeDriver: false,
         toValue: height,
         duration: openDuration
       }).start();
     } else {
-      Animated.timing(animatedHeight, {
+        this.closeAnimation = Animated.timing(animatedHeight, {
         useNativeDriver: false,
         toValue: minClosingHeight,
-        duration: closeDuration
-      }).start(() => {
+         duration: closeDuration,
+      });
+      this.closeAnimation.start(() => {
         pan.setValue({ x: 0, y: 0 });
         this.setState({
           modalVisible: visible,
@@ -66,6 +74,7 @@ class RBSheet extends Component {
         });
 
         if (typeof onClose === "function") onClose(props);
+        this.closeAnimation = null;
       });
     }
   }
